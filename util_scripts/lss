@@ -1,28 +1,52 @@
 #!/bin/bash
 
-# Check if a program is specified as the first argument
-if [ $# -gt 0 ] && command -v "$1" > /dev/null 2>&1; then
-    # First argument is a valid command
-    program="$1"
-    shift  # Remove program from arguments, rest are fdfind args
-    
-    # Find files/directories with fdfind and fzf
-    selected=$(fdfind "$@" | fzf)
-    
-    # Check if something was selected
-    if [ -n "$selected" ]; then
-        # Execute the program with the selected file
-        exec "$program" "$selected"
-    else
-        exit 1
-    fi
+# Parse arguments and flags
+include_hidden=false
+search_local=false
+args=()
+program=""
+
+# Check if first argument is a valid command (and not a flag)
+if [ $# -gt 0 ] && [[ "$1" != -* ]] && command -v "$1" >/dev/null 2>&1; then
+  program="$1"
+  shift # Remove program from arguments
+fi
+
+# Process remaining arguments
+for arg in "$@"; do
+  case $arg in
+  --all | -a)
+    include_hidden=true
+    ;;
+  --local | -l)
+    search_local=true
+    ;;
+  *)
+    args+=("$arg")
+    ;;
+  esac
+done
+
+# Build fdfind command
+fdfind_cmd="fdfind"
+if [ "$include_hidden" = true ]; then
+  fdfind_cmd="$fdfind_cmd --hidden"
+fi
+if [ "$search_local" = false ]; then
+  fdfind_cmd="$fdfind_cmd . $HOME"
+fi
+
+selected=$($fdfind_cmd "${args[@]}" | fzf)
+
+# Check if something was selected
+if [ -n "$selected" ]; then
+  if [ -n "$program" ]; then
+    # Execute the program with the selected file
+    exec "$program" "$selected"
+  else
+    # No program specified - just output the selection
+    echo "$selected"
+  fi
 else
-    # No program specified or invalid program - just select and output
-    selected=$(fdfind "$@" | fzf)
-    
-    if [ -n "$selected" ]; then
-        echo "$selected"
-    else
-        exit 1
-    fi
+  exit 1
 fi

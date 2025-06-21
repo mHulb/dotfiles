@@ -1,7 +1,34 @@
 #!/bin/bash
 
-# Find both files and directories, let user select one with fzf
-selected=$(fdfind "$@" | fzf)
+# Parse flags
+include_hidden=false
+search_local=false
+args=()
+
+for arg in "$@"; do
+  case $arg in
+  --all | -a)
+    include_hidden=true
+    ;;
+  --local | -l)
+    search_local=true
+    ;;
+  *)
+    args+=("$arg")
+    ;;
+  esac
+done
+
+# Build fdfind command
+fdfind_cmd="fdfind"
+if [ "$include_hidden" = true ]; then
+  fdfind_cmd="$fdfind_cmd --hidden"
+fi
+if [ "$search_local" = false ]; then
+  fdfind_cmd="$fdfind_cmd . $HOME"
+fi
+
+selected=$($fdfind_cmd "${args[@]}" | fzf)
 
 # Check if something was selected
 if [ -n "$selected" ]; then
