@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Check if a program is specified as the first argument
+if [ $# -gt 0 ] && command -v "$1" > /dev/null 2>&1; then
+    # First argument is a valid command
+    program="$1"
+    shift  # Remove program from arguments, rest are fdfind args
+    
+    # Find files/directories with fdfind and fzf
+    selected=$(fdfind "$@" | fzf)
+    
+    # Check if something was selected
+    if [ -n "$selected" ]; then
+        # Execute the program with the selected file
+        exec "$program" "$selected"
+    else
+        exit 1
+    fi
+else
+    # No program specified or invalid program - just select and output
+    selected=$(fdfind "$@" | fzf)
+    
+    if [ -n "$selected" ]; then
+        echo "$selected"
+    else
+        exit 1
+    fi
+fi

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Find both files and directories, let user select one with fzf
+selected=$(fdfind "$@" | fzf)
+
+# Check if something was selected
+if [ -n "$selected" ]; then
+  if [ -d "$selected" ]; then
+    # If it's a directory, cd to it
+    cd "$selected"
+  elif [ -f "$selected" ]; then
+    # If it's a file, cd to its parent directory
+    cd "$(dirname "$selected")"
+  fi
+
+  # Detect parent shell and exec it
+  parent_shell=$(ps -p $PPID -o comm= 2>/dev/null | tr -d ' ')
+
+  # Fallback to SHELL environment variable if ps fails
+  if [ -z "$parent_shell" ]; then
+    parent_shell=$(basename "$SHELL")
+  fi
+
+  # Execute the detected shell
+  exec "$parent_shell"
+else
+  echo "Nothing selected"
+fi
