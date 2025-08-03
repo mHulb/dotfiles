@@ -2,7 +2,7 @@
 
 # Update package list and install packages (excluding neovim)
 sudo apt update
-sudo apt install -y fish tmux git stow curl
+sudo apt install -y fish tmux git stow curl build-essential
 
 # Install latest neovim from GitHub releases
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
