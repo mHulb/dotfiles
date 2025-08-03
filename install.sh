@@ -1,10 +1,17 @@
 #!/bin/bash
 
-# Update package list and install packages
+# Update package list and install packages (excluding neovim)
 sudo apt update
-sudo apt install -y neovim fish tmux git stow
+sudo apt install -y fish tmux git stow
 
-# Stow configurations (assuming dotfiles are already in ~/dotfiles)
+# Install latest neovim from GitHub releases
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+rm nvim-linux-x86_64.tar.gz
+
+# Stow configurations
+cd ~/dotfiles
 stow fish nvim tmux
 
 # Set fish as default shell
