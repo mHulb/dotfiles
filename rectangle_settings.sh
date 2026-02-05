@@ -7,9 +7,9 @@ echo "Configuring Rectangle settings..."
 
 # Screen edge gaps (applied to maximize action)
 defaults write com.knollsoft.Rectangle screenEdgeGapTop -int 0
-defaults write com.knollsoft.Rectangle screenEdgeGapBottom -int 60
-defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 60
-defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 60
+defaults write com.knollsoft.Rectangle screenEdgeGapBottom -int 100
+defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 100
+defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 100
 
 # Make almost-maximize truly fullscreen (100% width and height)
 defaults write com.knollsoft.Rectangle almostMaximizeHeight -float 1.0

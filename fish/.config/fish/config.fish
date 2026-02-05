@@ -1,6 +1,7 @@
 if status is-interactive
     # Extend path
     set -gx PATH $HOME/.cargo/bin /opt/nvim-linux-x86_64/bin $PATH
+    fnm env --use-on-cd | source
 
     # Commands to run in interactive sessions can go here
     # Vim-style navigation with Ctrl key
